@@ -30,7 +30,13 @@
 ;;; Code:
 
 (defconst spacemacs-cmake-ide-packages
-  '()
+  '(
+    cmake-ide
+    irony
+    company-irony
+    company-irony-c-headers
+    ;rtags
+    )
   "The list of Lisp packages required by the spacemacs-cmake-ide layer.
 
 Each entry is either:
@@ -58,5 +64,53 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
+(defun spacemacs-cmake-ide/init-cmake-ide()
+  (use-package cmake-ide
+    :config
+    (cmake-ide-setup)
+    )
+  )
+
+(defun spacemacs-cmake-ide/init-irony()
+  (use-package irony
+    :config
+    (progn
+      (add-hook 'c++-mode-hook 'irony-mode)
+      (add-hook 'c-mode-hook 'irony-mode)
+      (add-hook 'objc-mode-hook 'irony-mode)
+      (add-hook 'irony-mode-hook
+                (lambda()
+                  (define-key irony-mode-map [remap completion-at-point]
+                    'irony-completion-at-point-async)
+                  (define-key irony-mode-map [remap complete-symbol]
+                    'irony-completion-at-point-async)
+                  )
+                )
+      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+      )
+    )
+  )
+
+(defun spacemacs-cmake-ide/init-company-irony()
+  (use-package company-irony
+    :config
+    (progn
+      (with-eval-after-load 'company
+        '(add-to-list 'company-backends 'company-irony)
+        )
+      )
+    )
+  )
+
+(defun spacemacs-cmake-ide/init-company-irony-c-headers()
+  (use-package company-irony-c-headers
+    :config
+    (progn
+      (with-eval-after-load 'company
+        '(add-to-list 'company-backends 'company-irony-c-headers)
+        )
+      )
+    )
+  )
 
 ;;; packages.el ends here
