@@ -35,7 +35,8 @@
     irony
     company-irony
     company-irony-c-headers
-    ;rtags
+    rtags
+    helm-rtags
     )
   "The list of Lisp packages required by the spacemacs-cmake-ide layer.
 
@@ -63,6 +64,9 @@ Each entry is either:
 
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
+
+(setq spacemacs-cmake-ide-excluded-packages
+      '(auto-complete-clang))
 
 (defun spacemacs-cmake-ide/init-cmake-ide()
   (use-package cmake-ide
@@ -109,6 +113,25 @@ Each entry is either:
       (with-eval-after-load 'company
         '(add-to-list 'company-backends 'company-irony-c-headers)
         )
+      )
+    )
+  )
+
+(defun spacemacs-cmake-ide/init-rtags()
+  (use-package rtags
+;    :config
+;    (progn
+;      ((rtags-enable-standard-keybindings)
+;       )
+;      )
+    )
+  )
+
+(defun spacemacs-cmake-ide/init-helm-rtags()
+  (use-package helm-rtags
+    :config
+    (progn
+      (setq rtags-use-helm t)
       )
     )
   )
