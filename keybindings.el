@@ -1,0 +1,31 @@
+(dolist (mode '(c-mode c++-mode))
+  (evil-leader/set-key-for-mode mode
+    "m r ." 'rtags-find-symbol-at-point
+    "m r ," 'rtags-find-references-at-point
+    "m r v" 'rtags-find-virtuals-at-point
+    "m r V" 'rtags-print-enum-value-at-point
+    "m r /" 'rtags-find-all-references-at-point
+    "m r Y" 'rtags-cycle-overlays-on-screen
+    "m r >" 'rtags-find-symbol
+    "m r <" 'rtags-find-references
+    "m r [" 'rtags-location-stack-back
+    "m r ]" 'rtags-location-stack-forward
+    "m r D" 'rtags-diagnostics
+    "m r G" 'rtags-guess-function-at-point
+    "m r p" 'rtags-set-current-project
+    "m r P" 'rtags-print-dependencies
+    "m r e" 'rtags-reparse-file
+    "m r E" 'rtags-preprocess-file
+    "m r R" 'rtags-rename-symbol
+    "m r M" 'rtags-symbol-info
+    "m r S" 'rtags-display-summary
+    "m r O" 'rtags-goto-offset
+    "m r ;" 'rtags-find-file
+    "m r F" 'rtags-fixit
+    "m r L" 'rtags-copy-and-print-current-location
+    "m r X" 'rtags-fix-fixit-at-point
+    "m r B" 'rtags-show-rtags-buffer
+    "m r I" 'rtags-imenu
+    "m r T" 'rtags-taglist
+    "m r h" 'rtags-print-class-hierarchy
+    "m r a" 'rtags-print-source-arguments))
