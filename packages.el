@@ -31,12 +31,14 @@
 
 (defconst spacemacs-cmake-ide-packages
   '(
-    cmake-ide
+    (cmake-ide :requires rtags irony company company-irony company-irony-c-headers)
     irony
-    company-irony
-    company-irony-c-headers
+    company
+    (company-irony :toggle (configuration-layer/package-usedp 'company))
+    (company-irony-c-headers :requires company irony)
+    irony-eldoc
     rtags
-    helm-rtags
+    (helm-rtags :requires rtags helm)
     )
   "The list of Lisp packages required by the spacemacs-cmake-ide layer.
 
@@ -65,57 +67,59 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
-(setq spacemacs-cmake-ide-excluded-packages
-      '(auto-complete-clang))
+;(setq spacemacs-cmake-ide-excluded-packages
+;      '(auto-complete-clang))
 
-(defun spacemacs-cmake-ide/init-cmake-ide()
-  (use-package cmake-ide
-    :config
-    (cmake-ide-setup)
+(defun spacemacs-cmake-ide/init-cmake-ide ()
+  (use-package cmake-ide)
+  :config
+  (progn
+    (dolist (mode c-c++-modes)
+      (spacemacs/set-leader-keys-for-major-mode mode
+        "cc" 'cmake-ide-compile
+        "pc" 'cmake-ide-run-cmake
+        "pC" 'cmake-ide-maybe-run-cmake
+        "pd" 'cmake-ide-delete-file
+        )
+      )
     )
   )
 
-(defun spacemacs-cmake-ide/init-irony()
+(defun spacemacs-cmake-ide/post-init-cmake-ide()
+  (cmake-ide-setup))
+
+(defun spacemacs-cmake-ide/init-irony ()
   (use-package irony
-    :config
-    (progn
-      (add-hook 'c++-mode-hook 'irony-mode)
-      (add-hook 'c-mode-hook 'irony-mode)
-      (add-hook 'objc-mode-hook 'irony-mode)
-      (add-hook 'irony-mode-hook
-                (lambda()
-                  (define-key irony-mode-map [remap completion-at-point]
-                    'irony-completion-at-point-async)
-                  (define-key irony-mode-map [remap complete-symbol]
-                    'irony-completion-at-point-async)
-                  )
-                )
-      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-      )
-    )
-  )
+    :init
+    (defun my-irony-mode-hook ()
+      (define-key irony-mode-map [remap completion-at-point] 'irony-completion-at-point-async)
+      (define-key irony-mode-map [remap complete-symbol] 'irony-completion-at-point-async))
 
-(defun spacemacs-cmake-ide/init-company-irony()
+    (add-hook 'c++-mode-hook 'irony-mode)
+    (add-hook 'c-mode-hook 'irony-mode)
+    (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    (spacemacs|diminish irony-mode "I" "I")))
+
+(defun spacemacs-cmake-ide/init-irony-eldoc ()
+  (use-package irony-eldoc
+    :init
+    (add-hook 'c-mode-hook 'eldoc-mode)
+    (add-hook 'c++-mode-hook 'eldoc-mode)
+    (add-hook 'irony-mode-hook 'irony-eldoc)))
+
+(defun spacemacs-cmake-ide/post-init-company ()
+  (with-eval-after-load 'company
+    (add-hook 'c-mode-hook (lambda () (add-to-list 'company-backends '(company-irony-c-headers company-irony))))
+    (add-hook 'c++-mode-hook (lambda () (add-to-list 'company-backends '(company-irony-c-headers company-irony))))))
+
+(defun spacemacs-cmake-ide/init-company-irony ()
   (use-package company-irony
-    :config
-    (progn
-      (with-eval-after-load 'company
-        '(add-to-list 'company-backends 'company-irony)
-        )
-      )
-    )
-  )
+    :init
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)))
 
-(defun spacemacs-cmake-ide/init-company-irony-c-headers()
-  (use-package company-irony-c-headers
-    :config
-    (progn
-      (with-eval-after-load 'company
-        '(add-to-list 'company-backends 'company-irony-c-headers)
-        )
-      )
-    )
-  )
+(defun spacemacs-cmake-ide/init-company-irony-c-headers ()
+  (use-package company-irony-c-headers))
 
 (defun spacemacs-cmake-ide/init-rtags()
   (use-package rtags
