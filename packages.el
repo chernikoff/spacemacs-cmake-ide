@@ -31,14 +31,14 @@
 
 (defconst spacemacs-cmake-ide-packages
   '(
-    (cmake-ide :requires rtags irony company company-irony company-irony-c-headers)
+;;    (cmake-ide :requires rtags irony company company-irony company-irony-c-headers)
     irony
     company
     (company-irony :toggle (configuration-layer/package-usedp 'company))
     (company-irony-c-headers :requires company irony)
-    irony-eldoc
-    rtags
-    (helm-rtags :requires rtags helm)
+;;    irony-eldoc
+;;    rtags
+;;    (helm-rtags :requires rtags helm)
     )
   "The list of Lisp packages required by the spacemacs-cmake-ide layer.
 
@@ -67,26 +67,26 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
-;(setq spacemacs-cmake-ide-excluded-packages
-;      '(auto-complete-clang))
+(setq spacemacs-cmake-ide-excluded-packages
+      '(auto-complete-clang))
 
-(defun spacemacs-cmake-ide/init-cmake-ide ()
-  (use-package cmake-ide)
-  :config
-  (progn
-    (dolist (mode c-c++-modes)
-      (spacemacs/set-leader-keys-for-major-mode mode
-        "cc" 'cmake-ide-compile
-        "pc" 'cmake-ide-run-cmake
-        "pC" 'cmake-ide-maybe-run-cmake
-        "pd" 'cmake-ide-delete-file
-        )
-      )
-    )
-  )
+;;(defun spacemacs-cmake-ide/init-cmake-ide ()
+;;  (use-package cmake-ide)
+;;  :config
+;;  (progn
+;;    (dolist (mode c-c++-modes)
+;;      (spacemacs/set-leader-keys-for-major-mode mode
+;;        "cc" 'cmake-ide-compile
+;;        "pc" 'cmake-ide-run-cmake
+;;        "pC" 'cmake-ide-maybe-run-cmake
+;;        "pd" 'cmake-ide-delete-file
+;;        )
+;;      )
+;;    )
+;;  )
 
-(defun spacemacs-cmake-ide/post-init-cmake-ide()
-  (cmake-ide-setup))
+;;(defun spacemacs-cmake-ide/post-init-cmake-ide()
+;;  (cmake-ide-setup))
 
 (defun spacemacs-cmake-ide/init-irony ()
   (use-package irony
@@ -121,23 +121,23 @@ Each entry is either:
 (defun spacemacs-cmake-ide/init-company-irony-c-headers ()
   (use-package company-irony-c-headers))
 
-(defun spacemacs-cmake-ide/init-rtags()
-  (use-package rtags
-;    :config
+;(defun spacemacs-cmake-ide/init-rtags()
+;  (use-package rtags
+;   :config
 ;    (progn
 ;      ((rtags-enable-standard-keybindings)
 ;       )
 ;      )
-    )
-  )
+;    )
+;  )
 
-(defun spacemacs-cmake-ide/init-helm-rtags()
-  (use-package helm-rtags
-    :config
-    (progn
-      (setq rtags-use-helm t)
-      )
-    )
-  )
+;(defun spacemacs-cmake-ide/init-helm-rtags()
+;  (use-package helm-rtags
+;    :config
+;    (progn
+;      (setq rtags-use-helm t)
+;      )
+;    )
+;  )
 
 ;;; packages.el ends here
